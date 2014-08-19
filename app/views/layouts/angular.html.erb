@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="youtubingApp">
   <head>
     <title>Youtubing</title>
     <meta charset="utf-8" />
@@ -13,7 +13,8 @@
       <div class="container">
         <div class="navbar-header">
           <a class="navbar-brand" href="#">
-            <h1><a href="/">Popcorn!</a></h1>
+            <h1>
+          <a href="/">Youtubing!</a></h1>
           </a>
         </div>
         <div class="navbar-collapse collapse">
@@ -22,14 +23,15 @@
               <!-- user info will go here soon -->
             </li>
           </ul>
-        </div><!--/.nav-collapse -->
+        </div>
+        <!--/.nav-collapse -->
       </div>
     </div>
-    <div class="container" id="primary">
-      <div class="row">
-        <div id="main" ng-view></div>
-      </div>
-    </div> <!-- /container -->
+    <div id="primary">
+      <div ng-view></div>
+    </div>
+    <div ng-controller="MoviesController">
+    </div>
     <%= javascript_include_tag "application" %>
   </body>
 </html>
