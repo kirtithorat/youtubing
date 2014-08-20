@@ -41,3 +41,4 @@ gem 'spring',        group: :development
 gem 'angularjs-rails', '~> 1.2.21'
 gem 'bootstrap-sass', '~> 3.2.0.1'
 gem 'autoprefixer-rails'
+gem 'underscore-rails', '~> 1.6.0'

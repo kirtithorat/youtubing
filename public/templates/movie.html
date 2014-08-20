@@ -1,0 +1,40 @@
+<div class="movie-page container">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="movie-player-container flex-movie widescreen">
+        <iframe width="853" height="480" ng-src="{{movie.youtubeUrl}}" frameborder="0" allowfullscreen></iframe> 
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-7">
+      <div class="row">
+        <div class="col-xs-12">
+          <h2>
+            {{movie.title}}
+          </h2>
+          {{movie.description}}
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-5">
+      <div class="row">
+        <div class="col-xs-6">
+          <div class="thumbnail-poster img-rounded">
+            <img ng-src="{{movie.posterUrl}}" alt="{{movie.title}}">
+          </div>
+        </div>
+        <div class="col-xs-6 movie-info">
+          <dl class="dl-horizontal">
+            <dt>Rated</dt>
+            <dd>{{movie.rated}}</dd>
+            <dt>Running time</dt>
+            <dd>{{movie.runningTime}} minutes</dd>
+            <dt>Released</dt>
+            <dd>{{movie.released}}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
