@@ -1,0 +1,12 @@
+<div ng-if="currentUser">
+  Logged in as <a href="/user/{{currentUser.id}}">{{currentUser.email}}</a>
+  (<a ng-click="logout()">Log out</a>)
+</div>
+
+<div ng-if="!currentUser">
+  <a href="/login">Log in</a>
+</div>
+
+<div class="error" ng-show="error">
+  Error: {{error}}
+</div>

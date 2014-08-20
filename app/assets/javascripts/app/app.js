@@ -1,8 +1,18 @@
 'use strict';
 
-angular.module('youtubingApp', ['ngRoute', 'youtubingApp.controllers', 'youtubingApp.services'])
+angular.module('youtubingApp', [
+    'ngRoute',
+    'ngCookies',
+    'youtubingApp.controllers',
+    'youtubingApp.services',
+    'youtubingApp.directives'
+  ])
   .config(function($routeProvider, $locationProvider) {
     $routeProvider
+      .when('/login', {
+        controller: 'LoginController',
+        templateUrl: '/templates/login.html'
+      })
       .when('/movie/:movie_id', {
         controller: 'MovieController',
         templateUrl: '/templates/movie.html'

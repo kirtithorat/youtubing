@@ -14,5 +14,6 @@
 //= require bootstrap-sprockets
 //= require angular
 //= require angular-route
+//= require angular-cookies
 //= require underscore
 //= require_tree .
