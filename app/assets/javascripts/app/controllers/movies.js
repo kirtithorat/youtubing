@@ -3,7 +3,9 @@
 angular.module('youtubingApp.controllers')
   .controller('MoviesController', function($scope, MoviesService) {
 
-    $scope.movies = MoviesService.movies();
+    MoviesService.movies().then(function (movies) {
+    	$scope.movies = movies;
+    });
 
     $scope.addFavorite = function(movie) {
       movie.isFavorite = true;
