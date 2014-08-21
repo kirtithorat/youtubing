@@ -2,7 +2,14 @@ Rails.application.routes.draw do
 
   root 'welcome#index'
 
-  devise_for :users
+  devise_for :users,
+  :controllers => {
+    registrations: "users/registrations",
+    sessions: "users/sessions"
+  }
+
+  get 'users', :to => 'users#index'
+  get 'users/:id/movies', :to => 'users#movies'
 
   resources :movies
 

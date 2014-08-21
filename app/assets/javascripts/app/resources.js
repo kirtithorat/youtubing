@@ -80,4 +80,23 @@ angular.module('youtubingApp.resources', ['rails'])
 
     return resource;
 
+  })
+  .factory('User', function($q, railsResourceFactory, Movie, Favorite) {
+
+    var resource = railsResourceFactory({
+      url: '/users',
+      name: 'user'
+    });
+
+    resource.prototype.favoriteMovies = function() {
+      var self = this;
+      return resource
+        .$get(self.$url('movies'))
+        .then(function(movies) {
+          self.favoriteMovies = movies;
+          return self.favoriteMovies;
+        });
+    };
+
+    return resource;
   });

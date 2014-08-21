@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('youtubingApp.controllers')
-  .controller('MoviesController', function($scope, MoviesService, Favorite, UserService, $q) {
+  .controller('MoviesController', function($scope, MoviesService) {
 
     $scope.$watch('chart', function(newValue, oldValue) {
       if (newValue) {

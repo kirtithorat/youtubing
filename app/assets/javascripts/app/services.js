@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('youtubingApp.services', ["youtubingApp.resources"])
+angular.module('youtubingApp.services', [])
   .service('MoviesService', function($q, $http, $cacheFactory, Movie) {
 
     var getNested = function(data, path) {
@@ -63,57 +63,86 @@ angular.module('youtubingApp.services', ["youtubingApp.resources"])
     };
 
   }) // end of MoviesService
-  .service('UserService', function($q, $cookieStore, $rootScope) {
-    var service = this;
-    this._user = null;
+  .service('AuthService',
+    function($rootScope, $q, $cookieStore) {
 
-    this.setCurrentUser = function(user) {
-      service._user = user;
-      $cookieStore.put('user', user);
-      $rootScope.$broadcast('user:set', user);
-    };
+      var service = this;
+      this._user = null;
 
-    this.currentUser = function() {
+      this.setCurrentUser = function(u) {
+        service._user = u;
+        $cookieStore.put('user', u);
+        $rootScope.$broadcast("user:set", u);
+      };
+
+      this.removeCurrentUser = function() {
+        service._user = null;
+        $cookieStore.remove('user');
+        $rootScope.$broadcast("user:unset");
+      };
+
+      this.currentUser = function() {
+        var d = $q.defer();
+        if (service._user) {
+          d.resolve(service._user);
+        } else if ($cookieStore.get('user')) {
+          service.setCurrentUser($cookieStore.get('user'));
+          d.resolve(service._user);
+        } else {
+          d.resolve(null);
+        }
+        return d.promise;
+      };
+
+    }) // end of AuthService
+  .service('UserService', function($q, $cookieStore, $rootScope, $http, AuthService) {
+    this.currentUser = AuthService.currentUser;
+
+    this.signup = function(params) {
       var d = $q.defer();
-      if (service._user) {
-        d.resolve(service._user);
-      } else if ($cookieStore.get('user')) {
-        service.setCurrentUser($cookieStore.get('user'));
-      } else {
-        d.resolve(null);
-      }
+      $http({
+        url: '/users',
+        method: 'POST',
+        data: {
+          user: params
+        }
+      }).success(function(response) {
+        var user = response.data.user;
+        user.auth_token = response.data.auth_token; // talk about this
+        AuthService.setCurrentUser(user);
+        d.resolve(user);
+      }).error(function(reason) {
+        d.reject(reason);
+      });
       return d.promise;
     };
 
-    this.signup = function(email) {
+    this.login = function(params) {
       var d = $q.defer();
-      var user = {
-        email: email,
-        id: 1
-      };
-
-      service.setCurrentUser(user);
-      d.resolve(user);
-      return d.promise;
-    };
-
-    this.login = function(email) {
-      var d = $q.defer();
-      var user = {
-        email: email,
-        id: 1
-      };
-
-      service.setCurrentUser(user);
-      d.resolve(user);
+      $http({
+        url: '/users/sign_in',
+        method: 'POST',
+        data: {
+          user: params
+        }
+      }).success(function(response) {
+        if (response.success) {
+          var user = response.data.user;
+          user.auth_token = response.data.auth_token; // talk about this
+          AuthService.setCurrentUser(user);
+          d.resolve(user);
+        } else {
+          d.reject(response)
+        }
+      }).error(function(reason) {
+        d.reject(reason);
+      });
       return d.promise;
     };
 
     this.logout = function() {
       var d = $q.defer();
-      service._user = null;
-      $cookieStore.remove('user');
-      $rootScope.$broadcast('user:unset');
+      AuthService.removeCurrentUser();
       d.resolve();
       return d.promise;
     };

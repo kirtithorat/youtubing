@@ -3,7 +3,7 @@
 angular.module('youtubingApp.directives', [])
   .directive('userPanel', function() {
     return {
-
+      restrict: 'A',
       templateUrl: '/templates/user_panel.html',
       controller: function($scope, UserService) {
 
@@ -12,7 +12,7 @@ angular.module('youtubingApp.directives', [])
           });
 
           UserService.currentUser().then(function(user) {
-            $scope.currentUSer = user;
+            $scope.currentUser = user;
           });
 
           $scope.logout = function() {
