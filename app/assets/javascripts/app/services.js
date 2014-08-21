@@ -1,22 +1,38 @@
 'use strict';
 
-angular.module('youtubingApp.services', [])
-  .service('MoviesService', function($q, $http, Movie) {
+angular.module('youtubingApp.services', ["youtubingApp.resources"])
+  .service('MoviesService', function($q, $http, $cacheFactory, Movie) {
 
-    this.movies = function(name) {
+    var getNested = function(data, path) {
+      var i, len = path.length;
+      for (i = 0; typeof data === 'object' && i < len; ++i) {
+        data = data[path[i]];
+      }
+      return data;
+    };
+
+    var moviesCache = $cacheFactory('movies');
+
+    this.movies = function(chart) {
+      chart = typeof chart !== 'undefined' ? chart : "most_popular";
       var d = $q.defer();
 
-      $http({
-          method: 'GET',
-          url: 'http://gdata.youtube.com/feeds/api/charts/movies/most_popular?v=2&max-results=12&paid-content=true&hl=en&region=us&alt=json'
-        })
-        .then(function(response) {
-            var movies = _.map(response.data.feed.entry, function(movie) {
+      var cachedMovies = moviesCache.get(chart);
+      if (cachedMovies) {
+        d.resolve(cachedMovies);
+      } else {
+
+        $http({
+            method: 'GET',
+            url: 'http://gdata.youtube.com/feeds/api/charts/movies/' + chart + '?v=2&max-results=12&paid-content=true&hl=en&region=us&alt=json'
+          })
+          .success(function(data) {
+            var movies = _.map(data.feed.entry, function(movie) {
               return {
                 youtubeId: movie['media$group']['yt$videoid']['$t'],
                 title: movie['media$group']['media$title']['$t'],
                 released: movie['yt$firstReleased']['$t'].match(/\d{4}/)[0],
-                rated: movie['media$group']['media$rating'][0]['$t'],
+                rated: getNested(movie, ['media$group', 'media$rating', 0, '$t']),
                 runningTime: Math.round(movie['media$group']['yt$duration']['seconds'] / 60),
                 posterUrl: _.findWhere(movie['media$group']['media$thumbnail'], {
                   "yt$name": "poster"
@@ -33,13 +49,16 @@ angular.module('youtubingApp.services', [])
             });
 
             $q.all(moviePromises).then(function(movieResources) {
+              moviesCache.put(chart, movieResources);
               d.resolve(movieResources);
             });
 
-          },
-          function(error) {
-            d.reject(error);
+          })
+          .error(function(data) {
+            d.reject(data);
           });
+      }
+
       return d.promise;
     };
 
