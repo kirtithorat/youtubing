@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('youtubingApp.services', [])
-  .service('MoviesService', function($q, $http) {
+  .service('MoviesService', function($q, $http, Movie) {
 
     this.movies = function(name) {
       var d = $q.defer();
@@ -24,7 +24,18 @@ angular.module('youtubingApp.services', [])
                 description: movie['media$group']['media$description']['$t']
               }
             });
-            d.resolve(movies);
+
+
+            // Insert into Database when non-existing 
+            var moviePromises = _.map(movies, function(movieData) {
+              var youtubeId = movieData.youtubeId;
+              return Movie.findOrCreateByYoutubeId(youtubeId, movieData)
+            });
+
+            $q.all(moviePromises).then(function(movieResources) {
+              d.resolve(movieResources);
+            });
+
           },
           function(error) {
             d.reject(error);
@@ -88,4 +99,4 @@ angular.module('youtubingApp.services', [])
       return d.promise;
     };
 
-  });  // end of UserService
+  }); // end of UserService
