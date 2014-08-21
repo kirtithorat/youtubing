@@ -12,15 +12,7 @@
             {{movie.title}}
           </div><!-- end .title -->
         </a>
-        <a class="favorite"
-          ng-click="removeFavorite(movie)"
-          ng-if="movie.isFavorite">
-          <span class="favorited-heart">&#x2665;</span> Favorite</a>
-        <a class="favorite"
-          ng-click="addFavorite(movie)"
-          ng-if="!movie.isFavorite">
-          <span class="unfavorited-heart">&#x2661;</span> Add Favorite
-          </a>
+        <div user-favorite ng-movie="movie"></div>
       </div><!-- end .movie-container -->
     </div><!-- end .movie -->
   </div>

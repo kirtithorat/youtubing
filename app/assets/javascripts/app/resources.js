@@ -62,6 +62,22 @@ angular.module('youtubingApp.resources', ['rails'])
       });
     };
 
+    resource.isFavorite = function(user, movie) {
+      var d = $q.defer();
+
+      var favorite = resource.query({
+        user_id: user.id,
+        movie_id: movie.id
+      });
+
+      favorite.then(function(results) {
+        d.resolve(results.length > 0);
+      }, function(err) {
+        d.reject(err);
+      });
+      return d.promise;
+    };
+
     return resource;
 
   });
